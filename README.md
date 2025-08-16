@@ -153,3 +153,4 @@ flutter build web --release
 ## 📝 Licence
 
 © 2025 MY JANTES. Tous droits réservés.# MyJantesFlutterApp
+# MyJantes-Beta
