@@ -1,0 +1,27 @@
+# Ignore unnecessary files for Docker build
+.git
+.gitignore
+.replit
+README.md
+*.md
+node_modules/
+.env
+.env.local
+.env.production
+.env.test
+
+# Flutter specific
+flutter_app/build/
+flutter_app/.dart_tool/
+flutter_app/.packages
+flutter_app/pubspec.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

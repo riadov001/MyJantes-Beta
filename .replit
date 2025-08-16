@@ -1,3 +1,4 @@
+modules = ["flutter", "python-3.11"]
 [[ports]]
 localPort = 5000
 externalPort = 80

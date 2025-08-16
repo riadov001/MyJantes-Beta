@@ -4,6 +4,8 @@
 
 MY JANTES is a comprehensive Flutter mobile application for a specialized aluminum wheel renovation service based in Liévin, France. The app provides a complete customer experience with online booking, quote requests with photo uploads, and an admin dashboard for business management. The application supports multiple platforms (iOS, Android, and Web) and is designed for deployment through Codemagic CI/CD with various distribution channels including Google Play Store, TestApp.io for iOS testing, and web hosting on Hostinger.
 
+**Recent Update (August 16, 2025)**: Successfully resolved all Replit deployment issues and implemented comprehensive Cloud Run hosting configuration with multi-stage Docker builds and intelligent Flutter/Python fallback deployment system.
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -73,6 +75,31 @@ The project uses Codemagic for automated builds and deployment:
 ### Distribution Platforms
 - **Google Play Store**: Primary Android distribution channel with app bundle support
 - **TestApp.io**: iOS testing distribution platform (bypassing Apple Developer account requirement)
+- **Replit Cloud Run**: Web deployment platform with automatic Flutter build detection and Python fallback server
+
+## Recent Deployment Changes (August 16, 2025)
+
+### Replit Deployment Issues Resolved
+Successfully fixed all deployment configuration issues:
+- Added missing deployment section configuration for Cloud Run hosting
+- Fixed invalid run command configuration with proper environment detection
+- Implemented Flutter dependency auto-installation on boot
+- Created comprehensive multi-stage Docker deployment setup
+
+### New Deployment Architecture
+- **Smart Startup System**: Automatic Flutter SDK detection with Python fallback
+- **Multi-stage Docker Build**: Flutter builder stage + Python production runtime
+- **Cloud Run Configuration**: Auto-scaling, health checks, resource limits
+- **Port Management**: Dynamic port binding from environment variables
+- **Build Caching**: Intelligent Flutter build detection to avoid unnecessary rebuilds
+
+### Deployment Files Added
+- `main.py`: Python web server with Flutter build detection
+- `run.py`: Smart Flutter/Python startup script  
+- `start.sh`: Bash startup script with environment detection
+- `Dockerfile`: Multi-stage build configuration for Cloud Run
+- `cloud-run-deploy.yaml`: Complete Cloud Run service specification
+- `.dockerignore`: Docker build optimization configuration
 - **Hostinger Web Hosting**: Web deployment platform for PWA version
 
 ### Development and CI/CD Tools
