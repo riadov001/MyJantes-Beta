@@ -16,8 +16,6 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      vars:
-        GITHUB_TOKEN: Encrypted(...) # <-- à configurer dans Codemagic
     scripts:
       # 🔹 Setup Flutter
       - name: Flutter clean & get
