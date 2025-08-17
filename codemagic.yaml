@@ -1,247 +1,69 @@
 workflows:
-  ios-workflow:
-    name: MY JANTES iOS (Test Sans Apple Developer)
-    max_build_duration: 90
-    instance_type: mac_mini_m1
+  flutter-multiplatform:
+    name: Flutter Multi-Platform CI/CD
+    max_build_duration: 120
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+        - pattern: develop
+          include: true
+          source: true
     environment:
-      ios_signing:
-        distribution_type: development  # Pour test sans Apple Developer payant
-        bundle_identifier: fr.myjantes.app
-      vars:
-        BUNDLE_ID: "fr.myjantes.app"
-        XCODE_WORKSPACE: "Runner.xcworkspace"  
-        XCODE_SCHEME: "Runner"
       flutter: stable
       xcode: latest
       cocoapods: default
-    triggering:
-      events:
-        - push
-        - tag
-        - pull_request
-      branch_patterns:
-        - pattern: main
-          include: true
-          source: true
     scripts:
-      - name: Set up code signing settings on Xcode project
+      # 🔹 Setup Flutter
+      - name: Flutter clean & get
         script: |
-          # Configuration automatique pour développement
-          xcode-project use-profiles || echo "Profil auto-généré utilisé"
-      - name: Get Flutter packages
-        script: |
-          cd $CM_BUILD_DIR
-          flutter packages pub get
-      - name: Install pods
-        script: |
-          find . -name "Podfile" -execdir pod install \;
-      - name: Flutter analyze
-        script: |
-          flutter analyze --no-fatal-infos
-      - name: Flutter unit tests
-        script: |
-          flutter test
-        ignore_failure: true
-      - name: Build ipa for development/testing
-        script: |
-          flutter build ipa --release \
-            --build-name=1.0.0 \
-            --build-number=$(date +%s)
-    artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
-      - flutter_drive.log
-    publishing:
-      email:
-        recipients:
-          - contact@myjantes.fr
-        notify:
-          success: true
-          failure: true
-        subject: "MY JANTES iOS Build - IPA Prêt pour Test"
-        body: |
-          Build iOS terminé avec succès !
-          
-          📱 IPA généré pour installation test
-          🔗 Téléchargez et distribuez via TestApp.io ou Diawi
-          📋 Compatible iPhone/iPad iOS 12.0+
-          
-          Installation : 
-          1. Téléchargez l'IPA depuis les artifacts
-          2. Uploadez sur diawi.com ou testapp.io  
-          3. Partagez le lien d'installation
-          4. Testeurs : Ouvrez le lien sur iPhone → Installer
-          5. Paramètres → Général → Gestion VPN → Faire confiance au développeur
+          flutter clean
+          flutter pub get
 
-  android-workflow:
-    name: MY JANTES Android (APK + Bundle Signé)
-    max_build_duration: 90
-    instance_type: linux_x2
-    environment:
-      android_signing:
-        - myjantes_keystore  # Nom du keystore uploadé dans Codemagic
-      vars:
-        PACKAGE_NAME: "fr.myjantes.app"
-        GOOGLE_PLAY_TRACK: "internal"
-      flutter: stable
-    triggering:
-      events:
-        - push
-        - tag
-        - pull_request
-      branch_patterns:
-        - pattern: main
-          include: true
-          source: true
-    scripts:
-      - name: Set up local.properties
+      # 🔹 Créer plateformes si manquantes
+      - name: Ensure platforms exist
         script: |
-          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
-      - name: Get Flutter packages
-        script: |
-          cd $CM_BUILD_DIR
-          flutter packages pub get
-      - name: Flutter analyze
-        script: |
-          flutter analyze --no-fatal-infos
-      - name: Flutter unit tests  
-        script: |
-          flutter test
-        ignore_failure: true
-      - name: Build APK signé pour installation directe
-        script: |
-          BUILD_NUMBER=$(date +%s)
-          flutter build apk --release \
-            --build-name=1.0.0 \
-            --build-number=$BUILD_NUMBER \
-            --target-platform android-arm,android-arm64,android-x64
-      - name: Build AAB signé pour Google Play Store
-        script: |
-          BUILD_NUMBER=$(date +%s)
-          flutter build appbundle --release \
-            --build-name=1.0.0 \
-            --build-number=$BUILD_NUMBER
-    artifacts:
-      - build/app/outputs/**/*.apk      # APK pour installation directe
-      - build/app/outputs/**/*.aab      # Bundle pour Google Play
-      - build/app/outputs/**/mapping.txt
-      - flutter_drive.log
-    publishing:
-      email:
-        recipients:
-          - contact@myjantes.fr
-        notify:
-          success: true
-          failure: true
-        subject: "MY JANTES Android Build - APK et Bundle Prêts"
-        body: |
-          Build Android terminé avec succès !
-          
-          📱 APK signé : Installation directe sur Android
-          📦 AAB signé : Prêt pour Google Play Store
-          🔐 Signature de production configurée
-          
-          Prochaines étapes :
-          1. Téléchargez APK pour test direct
-          2. Uploadez AAB sur Google Play Console
-          3. Configurez la fiche Store
-          4. Lancez en version interne puis production
+          flutter create --platforms=ios,android .
 
-  web-workflow:
-    name: MY JANTES Web PWA (Hostinger Ready)
-    max_build_duration: 45
-    instance_type: linux_x2
-    environment:
-      flutter: stable
-    triggering:
-      events:
-        - push
-        - tag
-        - pull_request
-      branch_patterns:
-        - pattern: main
-          include: true
-          source: true
-    scripts:
-      - name: Get Flutter packages
+      # 🔹 Installer CocoaPods
+      - name: Install CocoaPods
         script: |
-          cd $CM_BUILD_DIR
-          flutter packages pub get
-      - name: Flutter analyze
+          cd ios
+          pod install
+          cd ..
+
+      # 🔹 Build Android APK & AAB
+      - name: Build Android
         script: |
-          flutter analyze --no-fatal-infos
-      - name: Build web PWA optimisé
+          flutter build apk --release
+          flutter build appbundle --release
+
+      # 🔹 Build iOS (sans signature si aucun certificat n’est fourni)
+      - name: Build iOS
         script: |
-          flutter build web --release \
-            --web-renderer html \
-            --base-href "/" \
-            --dart-define=FLUTTER_WEB_USE_SKIA=false
-      - name: Optimiser pour Hostinger
+          flutter build ios --release --no-codesign
+
+      # 🔹 (Optionnel) Code signing iOS
+      - name: iOS Code Signing
         script: |
-          # Créer fichier .htaccess pour Hostinger
-          cat > build/web/.htaccess << 'EOF'
-          RewriteEngine On
-          
-          # Force HTTPS
-          RewriteCond %{HTTPS} off
-          RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-          
-          # Cache assets Flutter
-          <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$">
-              ExpiresActive On
-              ExpiresDefault "access plus 1 year"
-              Header append Cache-Control "public, immutable"
-          </FilesMatch>
-          
-          # Headers PWA
-          <FilesMatch "manifest\.json$">
-              Header set Content-Type application/json
-          </FilesMatch>
-          
-          <FilesMatch "flutter_service_worker\.js$">
-              Header set Content-Type application/javascript
-              Header set Cache-Control "no-cache, no-store, must-revalidate"
-          </FilesMatch>
-          
-          # Fallback SPA
-          RewriteCond %{REQUEST_FILENAME} !-f
-          RewriteCond %{REQUEST_FILENAME} !-d
-          RewriteRule . /index.html [L]
-          EOF
-          
-          # Optimiser taille fichiers
-          find build/web -name "*.js" -exec gzip -9 -c {} > {}.gz \;
-          find build/web -name "*.css" -exec gzip -9 -c {} > {}.gz \;
-          
-          echo "Build web optimisé pour Hostinger terminé !"
-          ls -la build/web/
+          echo "⚡ Ajoute tes certificats Apple pour signer l'app iOS"
+        ignore_failure: true
+
+      # 🔹 (Optionnel) Code signing Android
+      - name: Android Code Signing
+        script: |
+          echo "⚡ Ajoute ton keystore Android pour signer l'APK/AAB"
+        ignore_failure: true
+
+      # 🔹 Upload vers GitHub Releases
+      - name: Publish to GitHub Releases
+        script: |
+          TAG_NAME="build-$(date +'%Y%m%d-%H%M%S')"
+          gh release create $TAG_NAME build/app/outputs/flutter-apk/*.apk build/app/outputs/bundle/release/*.aab build/ios/iphoneos/**/*.app --title "Build $TAG_NAME"
     artifacts:
-      - build/web/**
-    publishing:
-      email:
-        recipients:
-          - contact@myjantes.fr  
-        notify:
-          success: true
-          failure: true
-        subject: "MY JANTES Web PWA - Prêt pour Hostinger"
-        body: |
-          Build Web terminé avec succès !
-          
-          🌐 PWA complète générée
-          📁 Fichiers optimisés pour Hostinger
-          🔒 HTTPS et cache configurés
-          📱 Compatible mobile et desktop
-          
-          Déploiement Hostinger :
-          1. Téléchargez le dossier build/web/
-          2. Connectez-vous à cPanel Hostinger
-          3. Supprimez contenu public_html/
-          4. Uploadez tout le contenu de build/web/
-          5. Site accessible sur votre domaine !
-          
-          Fonctionnalités :
-          ✓ Progressive Web App
-          ✓ Installation sur mobile/desktop  
-          ✓ Fonctionnement offline
-          ✓ Notifications push prêtes
+      - build/ios/iphoneos/**/*.app
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/release/*.aab
