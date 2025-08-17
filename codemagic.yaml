@@ -16,7 +16,6 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      android: true
       vars:
         GITHUB_TOKEN: Encrypted(...) # <-- à configurer dans Codemagic
     scripts:
