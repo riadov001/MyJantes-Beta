@@ -20,31 +20,47 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
 
 def build_flutter_web():
-    """Build Flutter web application if not already built"""
+    """Build Flutter web application if not already built or if forced rebuild"""
     build_dir = Path("flutter_app/build/web")
     
-    if not build_dir.exists():
-        print("Building Flutter web application...")
-        try:
-            # Try to build with flutter if available
-            result = subprocess.run(
-                ["flutter", "build", "web", "--release"],
-                cwd="flutter_app",
-                capture_output=True,
-                text=True
-            )
-            if result.returncode == 0:
-                print("Flutter web build completed successfully!")
-                return True
-            else:
-                print(f"Flutter build failed: {result.stderr}")
-                return False
-        except FileNotFoundError:
-            print("Flutter not found. Creating fallback web structure...")
+    # Always attempt to build if Flutter is available
+    print("Building Flutter web application...")
+    try:
+        # Ensure Flutter dependencies are installed first
+        print("Installing Flutter dependencies...")
+        pub_get_result = subprocess.run(
+            ["flutter", "pub", "get"],
+            cwd="flutter_app",
+            capture_output=True,
+            text=True
+        )
+        
+        if pub_get_result.returncode != 0:
+            print(f"Flutter pub get warning: {pub_get_result.stderr}")
+            # Continue anyway as this might not be critical
+        
+        # Build Flutter web
+        result = subprocess.run(
+            ["flutter", "build", "web", "--release", "--web-renderer", "html"],
+            cwd="flutter_app",
+            capture_output=True,
+            text=True
+        )
+        
+        if result.returncode == 0:
+            print("Flutter web build completed successfully!")
+            return True
+        else:
+            print(f"Flutter build failed: {result.stderr}")
+            print(f"Flutter build stdout: {result.stdout}")
+            # Create fallback instead of failing
+            print("Creating fallback web structure...")
             create_fallback_web()
             return True
-    else:
-        print("Flutter web build already exists.")
+            
+    except FileNotFoundError:
+        print("Flutter not found in PATH. Creating fallback web structure...")
+        create_fallback_web()
         return True
 
 def create_fallback_web():

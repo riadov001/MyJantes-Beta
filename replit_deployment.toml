@@ -1,0 +1,16 @@
+[deployment]
+run = ["python", "main.py"]
+deploymentTarget = "cloudrun"
+build = ["bash", "-c", "cd flutter_app && flutter build web --release --web-renderer html"]
+
+[env]
+FLUTTER_WEB_PORT = "5000"
+PYTHON_UNBUFFERED = "1"
+PATH = "/nix/store/*/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[cloudrun]
+memory = "1Gi"
+cpu = "1"
+minInstances = 0
+maxInstances = 10
+concurrency = 100
