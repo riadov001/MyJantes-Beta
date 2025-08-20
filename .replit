@@ -8,6 +8,7 @@ integrations = ["javascript_object_storage==1.0.0"]
 
 [nix]
 packages = ["hol", "zip"]
+channel = "stable-25_05"
 
 [deployment]
 deploymentTarget = "cloudrun"

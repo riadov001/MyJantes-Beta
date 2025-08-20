@@ -1,18 +1,18 @@
 [deployment]
 run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
-build = ["bash", "-c", "cd flutter_app && (flutter build web --release --web-renderer html 2>/dev/null || echo 'Flutter build failed, using fallback') && cd .. && python3 -c 'print(\"Build completed successfully\")'"]
+build = ["bash", "-c", "cd flutter_app && (flutter clean && flutter pub get && flutter build web --release --web-renderer html) || echo 'Flutter build failed, using fallback' && cd .. && echo 'Build command completed'"]
 
 [env]
-FLUTTER_WEB_PORT = "5000"
 PYTHON_UNBUFFERED = "1"
 PORT = "5000"
-PATH = "/nix/store/**/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+REPL_DEPLOYMENT = "true"
+FLUTTER_WEB_AUTO_DETECT = "true"
 
 [cloudrun]
-memory = "1Gi"
-cpu = "1"
-minInstances = 0
+memory = "2Gi"
+cpu = "2"
+minInstances = 1
 maxInstances = 10
 concurrency = 100
 port = 5000
