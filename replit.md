@@ -4,7 +4,7 @@
 
 MY JANTES is a comprehensive Flutter mobile application for a specialized aluminum wheel renovation service based in Liévin, France. The app provides a complete customer experience with online booking, quote requests with photo uploads, and an admin dashboard for business management. The application supports multiple platforms (iOS, Android, and Web) and is designed for deployment through Codemagic CI/CD with various distribution channels including Google Play Store, TestApp.io for iOS testing, and web hosting on Hostinger.
 
-**Recent Update (August 16, 2025)**: Successfully resolved all Replit deployment issues and implemented comprehensive Cloud Run hosting configuration with multi-stage Docker builds and intelligent Flutter/Python fallback deployment system.
+**Recent Update (August 20, 2025)**: Successfully implemented complete invoicing module with manual invoice creation, quote-to-invoice conversion, email sending, client notifications, and full admin dashboard integration. Added comprehensive invoice management with search, filtering, and status tracking.
 
 ## User Preferences
 
