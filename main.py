@@ -180,24 +180,31 @@ def main():
     
     print("=" * 50)
     print("MY JANTES Flutter Web Server")
+    print("Déploiement Replit Cloud Run")
     print("=" * 50)
     
-    # Build Flutter web if needed
-    if not build_flutter_web():
-        print("Failed to build Flutter web application")
-        sys.exit(1)
+    # Force build Flutter web every time for deployment reliability  
+    print("Construction de l'application Flutter...")
+    build_success = build_flutter_web()
+    
+    if not build_success:
+        print("Construction Flutter échouée - utilisation de la page de secours")
+    else:
+        print("Construction Flutter réussie!")
     
     # Start server
     try:
         with socketserver.TCPServer(("0.0.0.0", PORT), MyHTTPRequestHandler) as httpd:
-            print(f"🚀 Serving at http://0.0.0.0:{PORT}")
-            print(f"📱 MY JANTES application ready!")
+            print(f"🚀 Serveur démarré sur http://0.0.0.0:{PORT}")
+            print(f"📱 MY JANTES application prête!")
+            print("🔧 Pour résoudre l'erreur de déploiement:")
+            print("   Copiez le contenu de .replit.template dans .replit")
             print("=" * 50)
             httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\n🛑 Server stopped by user")
+        print("\n🛑 Serveur arrêté par l'utilisateur")
     except Exception as e:
-        print(f"❌ Server error: {e}")
+        print(f"❌ Erreur serveur: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
