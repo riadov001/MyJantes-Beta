@@ -12,3 +12,5 @@ channel = "stable-25_05"
 
 [deployment]
 deploymentTarget = "cloudrun"
+run = ["sh", "-c", "Flutter run"]
+build = ["sh", "-c", "Flutter build web"]
