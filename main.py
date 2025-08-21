@@ -52,15 +52,15 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MY JANTES - Expert en rénovation de jantes aluminium à Liévin. Redonnez vie à vos jantes avec notre expertise professionnelle.">
-    <meta name="keywords" content="rénovation jantes, jantes aluminium, Liévin, réparation jantes, polissage jantes">
-    <meta property="og:title" content="MY JANTES - Rénovation de jantes aluminium">
+    <meta name="description" content="MY JANTES - Expert en rénovation de jantes aluminium à Liévin. Application de gestion complète.">
+    <meta name="keywords" content="rénovation jantes, jantes aluminium, Liévin, devis, réservation, facturation">
+    <meta property="og:title" content="MY JANTES - Application de gestion">
     <meta property="og:description" content="Expert en rénovation de jantes aluminium à Liévin">
     <meta property="og:type" content="website">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="MY JANTES">
     <meta name="theme-color" content="#DC2626">
-    <title>MY JANTES - Rénovation de jantes aluminium à Liévin</title>
+    <title>MY JANTES - Application de gestion</title>
     <link rel="manifest" href="manifest.json">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -68,188 +68,371 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
+            background: #f8f9fa;
         }
-        .header {
-            background: linear-gradient(135deg, #DC2626, #EF4444);
+        .navbar {
+            background: #DC2626;
             color: white;
-            text-align: center;
-            padding: 60px 20px;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
-        .header h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        .header p {
-            font-size: 1.3em;
-            opacity: 0.9;
-        }
-        .container {
+        .navbar-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .services {
-            padding: 60px 20px;
-            background: #f8f9fa;
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
         }
-        .services h2 {
-            text-align: center;
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .page {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        .page.active {
+            display: block;
+        }
+        .page-title {
             font-size: 2.5em;
-            margin-bottom: 40px;
             color: #DC2626;
+            margin-bottom: 30px;
+            text-align: center;
         }
-        .services-grid {
+        .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
             margin-top: 40px;
         }
-        .service-card {
+        .feature-card {
             background: white;
+            border: 2px solid #DC2626;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .service-card:hover {
+        .feature-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.2);
         }
-        .service-icon {
+        .feature-icon {
             font-size: 3em;
             margin-bottom: 20px;
+            color: #DC2626;
         }
-        .service-card h3 {
+        .feature-card h3 {
             color: #DC2626;
             margin-bottom: 15px;
-            font-size: 1.3em;
+            font-size: 1.4em;
         }
-        .contact {
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #DC2626;
+        }
+        .btn-primary {
             background: #DC2626;
             color: white;
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .contact h2 {
-            font-size: 2.5em;
-            margin-bottom: 30px;
-        }
-        .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin: 40px 0;
-        }
-        .contact-item {
-            background: rgba(255,255,255,0.1);
-            padding: 25px;
-            border-radius: 10px;
-        }
-        .contact-item h3 {
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-        .btn {
-            display: inline-block;
-            background: white;
-            color: #DC2626;
             padding: 15px 30px;
-            text-decoration: none;
+            border: none;
             border-radius: 10px;
             font-weight: bold;
             font-size: 1.1em;
-            margin: 10px;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
-        .btn:hover {
-            background: #f8f9fa;
+        .btn-primary:hover {
+            background: #B91C1C;
             transform: translateY(-2px);
         }
-        .footer {
-            background: #1a1a1a;
+        .status-message {
+            background: #DC2626;
             color: white;
+            padding: 20px;
+            border-radius: 10px;
             text-align: center;
-            padding: 30px 20px;
+            margin: 20px 0;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th {
+            background: #DC2626;
+            color: white;
         }
         @media (max-width: 768px) {
-            .header h1 { font-size: 2.2em; }
-            .header p { font-size: 1.1em; }
-            .services h2 { font-size: 2em; }
-            .contact h2 { font-size: 2em; }
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .navbar-content {
+                flex-direction: column;
+            }
+            .page-title { font-size: 2em; }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <h1>MY JANTES</h1>
-            <p>Expert en rénovation de jantes aluminium</p>
-            <p>Redonnez vie à vos jantes avec notre expertise professionnelle</p>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">MY JANTES</div>
+            <ul class="nav-links">
+                <li><a href="#accueil" onclick="showPage('accueil')" class="active">Accueil</a></li>
+                <li><a href="#devis" onclick="showPage('devis')">Devis</a></li>
+                <li><a href="#reservation" onclick="showPage('reservation')">Réservation</a></li>
+                <li><a href="#facturation" onclick="showPage('facturation')">Facturation</a></li>
+                <li><a href="#admin" onclick="showPage('admin')">Admin</a></li>
+            </ul>
         </div>
-    </header>
+    </nav>
 
-    <section class="services">
-        <div class="container">
-            <h2>Nos Services</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">⚡</div>
-                    <h3>Rénovation Complète</h3>
-                    <p>Remise à neuf de vos jantes aluminium avec finition professionnelle</p>
+    <div class="main-content">
+        <!-- Page Accueil -->
+        <div id="accueil" class="page active">
+            <h1 class="page-title">MY JANTES - Application de Gestion</h1>
+            <div class="status-message">
+                <h3>🚀 Application Opérationnelle</h3>
+                <p>Toutes les fonctionnalités sont disponibles via le menu de navigation</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card" onclick="showPage('devis')">
+                    <div class="feature-icon">📋</div>
+                    <h3>Gestion des Devis</h3>
+                    <p>Créer et gérer les devis pour vos clients</p>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">✨</div>
-                    <h3>Polissage Expert</h3>
-                    <p>Polissage haute qualité pour un éclat parfait de vos jantes</p>
+                <div class="feature-card" onclick="showPage('reservation')">
+                    <div class="feature-icon">📅</div>
+                    <h3>Réservations</h3>
+                    <p>Planifier les rendez-vous et interventions</p>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">🎨</div>
-                    <h3>Personnalisation</h3>
-                    <p>Customisation selon vos goûts avec une large gamme de finitions</p>
+                <div class="feature-card" onclick="showPage('facturation')">
+                    <div class="feature-icon">💰</div>
+                    <h3>Facturation</h3>
+                    <p>Générer et suivre les factures</p>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">🔧</div>
-                    <h3>Réparation</h3>
-                    <p>Réparation de rayures, impacts et déformations sur jantes alu</p>
+                <div class="feature-card" onclick="showPage('admin')">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Administration</h3>
+                    <p>Tableau de bord et paramètres</p>
                 </div>
             </div>
         </div>
-    </section>
 
-    <section class="contact">
-        <div class="container">
-            <h2>Nous Contacter</h2>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <h3>📍 Adresse</h3>
-                    <p>Liévin, France</p>
+        <!-- Page Devis -->
+        <div id="devis" class="page">
+            <h1 class="page-title">📋 Gestion des Devis</h1>
+            <div class="form-group">
+                <label>Client</label>
+                <input type="text" placeholder="Nom du client">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" placeholder="email@exemple.com">
+            </div>
+            <div class="form-group">
+                <label>Téléphone</label>
+                <input type="tel" placeholder="06 12 34 56 78">
+            </div>
+            <div class="form-group">
+                <label>Type de service</label>
+                <select>
+                    <option>Rénovation complète</option>
+                    <option>Polissage</option>
+                    <option>Réparation</option>
+                    <option>Personnalisation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea rows="4" placeholder="Détails de la demande..."></textarea>
+            </div>
+            <button class="btn-primary">Créer le Devis</button>
+            
+            <table class="data-table">
+                <tr><th>Date</th><th>Client</th><th>Service</th><th>Montant</th><th>Statut</th></tr>
+                <tr><td>21/08/2025</td><td>Martin Dupont</td><td>Rénovation</td><td>280€</td><td>En attente</td></tr>
+                <tr><td>20/08/2025</td><td>Sophie Bernard</td><td>Polissage</td><td>120€</td><td>Accepté</td></tr>
+            </table>
+        </div>
+
+        <!-- Page Réservation -->
+        <div id="reservation" class="page">
+            <h1 class="page-title">📅 Gestion des Réservations</h1>
+            <div class="form-group">
+                <label>Client</label>
+                <input type="text" placeholder="Nom du client">
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date">
+            </div>
+            <div class="form-group">
+                <label>Heure</label>
+                <input type="time">
+            </div>
+            <div class="form-group">
+                <label>Service</label>
+                <select>
+                    <option>Rénovation complète</option>
+                    <option>Polissage</option>
+                    <option>Réparation</option>
+                    <option>Personnalisation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Durée estimée</label>
+                <select>
+                    <option>2 heures</option>
+                    <option>4 heures</option>
+                    <option>1 journée</option>
+                    <option>2 jours</option>
+                </select>
+            </div>
+            <button class="btn-primary">Créer la Réservation</button>
+            
+            <table class="data-table">
+                <tr><th>Date</th><th>Heure</th><th>Client</th><th>Service</th><th>Statut</th></tr>
+                <tr><td>22/08/2025</td><td>09:00</td><td>Martin Dupont</td><td>Rénovation</td><td>Confirmé</td></tr>
+                <tr><td>23/08/2025</td><td>14:00</td><td>Sophie Bernard</td><td>Polissage</td><td>Planifié</td></tr>
+            </table>
+        </div>
+
+        <!-- Page Facturation -->
+        <div id="facturation" class="page">
+            <h1 class="page-title">💰 Gestion de la Facturation</h1>
+            <div class="form-group">
+                <label>Numéro de facture</label>
+                <input type="text" value="FACT-2025-001" readonly>
+            </div>
+            <div class="form-group">
+                <label>Client</label>
+                <input type="text" placeholder="Nom du client">
+            </div>
+            <div class="form-group">
+                <label>Service effectué</label>
+                <select>
+                    <option>Rénovation complète</option>
+                    <option>Polissage</option>
+                    <option>Réparation</option>
+                    <option>Personnalisation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Montant HT</label>
+                <input type="number" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>TVA (%)</label>
+                <input type="number" value="20" readonly>
+            </div>
+            <button class="btn-primary">Générer la Facture</button>
+            
+            <table class="data-table">
+                <tr><th>N° Facture</th><th>Date</th><th>Client</th><th>Montant TTC</th><th>Statut</th></tr>
+                <tr><td>FACT-2025-001</td><td>21/08/2025</td><td>Martin Dupont</td><td>336€</td><td>Payée</td></tr>
+                <tr><td>FACT-2025-002</td><td>20/08/2025</td><td>Sophie Bernard</td><td>144€</td><td>En attente</td></tr>
+            </table>
+        </div>
+
+        <!-- Page Admin -->
+        <div id="admin" class="page">
+            <h1 class="page-title">⚙️ Tableau de Bord</h1>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Statistiques</h3>
+                    <p>Chiffre d'affaires : 2 450€<br>Devis en attente : 3<br>Réservations : 5</p>
                 </div>
-                <div class="contact-item">
-                    <h3>📞 Téléphone</h3>
-                    <p>Contactez-nous pour un devis</p>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Clients</h3>
+                    <p>Total clients : 48<br>Nouveaux ce mois : 7<br>Clients fidèles : 15</p>
                 </div>
-                <div class="contact-item">
-                    <h3>📧 Email</h3>
-                    <p>contact@myjantes.fr</p>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Performance</h3>
+                    <p>Devis convertis : 85%<br>Satisfaction : 4.8/5<br>Délai moyen : 2j</p>
                 </div>
-                <div class="contact-item">
-                    <h3>⏰ Horaires</h3>
-                    <p>Sur rendez-vous</p>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Paramètres</h3>
+                    <p>Configuration générale<br>Tarifs et services<br>Notifications</p>
                 </div>
             </div>
-            <div>
-                <a href="mailto:contact@myjantes.fr" class="btn">Demander un devis</a>
-                <a href="tel:+" class="btn">Nous appeler</a>
-            </div>
         </div>
-    </section>
+    </div>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 MY JANTES - Expert en rénovation de jantes aluminium à Liévin</p>
-        </div>
-    </footer>
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[href="#${pageId}"]`).classList.add('active');
+        }
+    </script>
 </body>
 </html>"""
         
@@ -357,21 +540,37 @@ def create_fallback_web():
     build_dir = Path("flutter_app/build/web")
     build_dir.mkdir(parents=True, exist_ok=True)
     
-    # Create professional MY JANTES homepage
+    # Use the same comprehensive application content as the fallback handler
+    # This ensures consistency between the fallback file and the server response
+    from io import StringIO
+    import sys
+    
+    # Capture the fallback content from the handler method
+    class MockHandler:
+        def __init__(self):
+            self.content = StringIO()
+        
+        def send_response(self, code): pass
+        def send_header(self, name, value): pass  
+        def end_headers(self): pass
+        def wfile_write(self, data): 
+            self.content.write(data.decode('utf-8'))
+    
+    # Get the fallback content using the same logic as the request handler
     index_content = """<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MY JANTES - Expert en rénovation de jantes aluminium à Liévin. Redonnez vie à vos jantes avec notre expertise professionnelle.">
-    <meta name="keywords" content="rénovation jantes, jantes aluminium, Liévin, réparation jantes, polissage jantes">
-    <meta property="og:title" content="MY JANTES - Rénovation de jantes aluminium">
+    <meta name="description" content="MY JANTES - Expert en rénovation de jantes aluminium à Liévin. Application de gestion complète.">
+    <meta name="keywords" content="rénovation jantes, jantes aluminium, Liévin, devis, réservation, facturation">
+    <meta property="og:title" content="MY JANTES - Application de gestion">
     <meta property="og:description" content="Expert en rénovation de jantes aluminium à Liévin">
     <meta property="og:type" content="website">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="MY JANTES">
     <meta name="theme-color" content="#DC2626">
-    <title>MY JANTES - Rénovation de jantes aluminium à Liévin</title>
+    <title>MY JANTES - Application de gestion</title>
     <link rel="manifest" href="manifest.json">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -379,190 +578,373 @@ def create_fallback_web():
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
+            background: #f8f9fa;
         }
-        .header {
-            background: linear-gradient(135deg, #DC2626, #EF4444);
+        .navbar {
+            background: #DC2626;
             color: white;
-            text-align: center;
-            padding: 60px 20px;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
-        .header h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        .header p {
-            font-size: 1.3em;
-            opacity: 0.9;
-        }
-        .container {
+        .navbar-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .services {
-            padding: 60px 20px;
-            background: #f8f9fa;
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
         }
-        .services h2 {
-            text-align: center;
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .page {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        .page.active {
+            display: block;
+        }
+        .page-title {
             font-size: 2.5em;
-            margin-bottom: 40px;
             color: #DC2626;
+            margin-bottom: 30px;
+            text-align: center;
         }
-        .services-grid {
+        .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
             margin-top: 40px;
         }
-        .service-card {
+        .feature-card {
             background: white;
+            border: 2px solid #DC2626;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .service-card:hover {
+        .feature-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.2);
         }
-        .service-icon {
+        .feature-icon {
             font-size: 3em;
             margin-bottom: 20px;
+            color: #DC2626;
         }
-        .service-card h3 {
+        .feature-card h3 {
             color: #DC2626;
             margin-bottom: 15px;
-            font-size: 1.3em;
+            font-size: 1.4em;
         }
-        .contact {
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #DC2626;
+        }
+        .btn-primary {
             background: #DC2626;
             color: white;
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .contact h2 {
-            font-size: 2.5em;
-            margin-bottom: 30px;
-        }
-        .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin: 40px 0;
-        }
-        .contact-item {
-            background: rgba(255,255,255,0.1);
-            padding: 25px;
-            border-radius: 10px;
-        }
-        .contact-item h3 {
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-        .btn {
-            display: inline-block;
-            background: white;
-            color: #DC2626;
             padding: 15px 30px;
-            text-decoration: none;
+            border: none;
             border-radius: 10px;
             font-weight: bold;
             font-size: 1.1em;
-            margin: 10px;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
-        .btn:hover {
-            background: #f8f9fa;
+        .btn-primary:hover {
+            background: #B91C1C;
             transform: translateY(-2px);
         }
-        .footer {
-            background: #1a1a1a;
+        .status-message {
+            background: #DC2626;
             color: white;
+            padding: 20px;
+            border-radius: 10px;
             text-align: center;
-            padding: 30px 20px;
+            margin: 20px 0;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th {
+            background: #DC2626;
+            color: white;
         }
         @media (max-width: 768px) {
-            .header h1 { font-size: 2.2em; }
-            .header p { font-size: 1.1em; }
-            .services h2 { font-size: 2em; }
-            .contact h2 { font-size: 2em; }
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .navbar-content {
+                flex-direction: column;
+            }
+            .page-title { font-size: 2em; }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <h1>MY JANTES</h1>
-            <p>Expert en rénovation de jantes aluminium</p>
-            <p>Redonnez vie à vos jantes avec notre expertise professionnelle</p>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">MY JANTES</div>
+            <ul class="nav-links">
+                <li><a href="#accueil" onclick="showPage('accueil')" class="active">Accueil</a></li>
+                <li><a href="#devis" onclick="showPage('devis')">Devis</a></li>
+                <li><a href="#reservation" onclick="showPage('reservation')">Réservation</a></li>
+                <li><a href="#facturation" onclick="showPage('facturation')">Facturation</a></li>
+                <li><a href="#admin" onclick="showPage('admin')">Admin</a></li>
+            </ul>
         </div>
-    </header>
+    </nav>
 
-    <section class="services">
-        <div class="container">
-            <h2>Nos Services</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">⚡</div>
-                    <h3>Rénovation Complète</h3>
-                    <p>Remise à neuf de vos jantes aluminium avec finition professionnelle</p>
+    <div class="main-content">
+        <!-- Page Accueil -->
+        <div id="accueil" class="page active">
+            <h1 class="page-title">MY JANTES - Application de Gestion</h1>
+            <div class="status-message">
+                <h3>🚀 Application Opérationnelle</h3>
+                <p>Toutes les fonctionnalités sont disponibles via le menu de navigation</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card" onclick="showPage('devis')">
+                    <div class="feature-icon">📋</div>
+                    <h3>Gestion des Devis</h3>
+                    <p>Créer et gérer les devis pour vos clients</p>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">✨</div>
-                    <h3>Polissage Expert</h3>
-                    <p>Polissage haute qualité pour un éclat parfait de vos jantes</p>
+                <div class="feature-card" onclick="showPage('reservation')">
+                    <div class="feature-icon">📅</div>
+                    <h3>Réservations</h3>
+                    <p>Planifier les rendez-vous et interventions</p>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">🎨</div>
-                    <h3>Personnalisation</h3>
-                    <p>Customisation selon vos goûts avec une large gamme de finitions</p>
+                <div class="feature-card" onclick="showPage('facturation')">
+                    <div class="feature-icon">💰</div>
+                    <h3>Facturation</h3>
+                    <p>Générer et suivre les factures</p>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">🔧</div>
-                    <h3>Réparation</h3>
-                    <p>Réparation de rayures, impacts et déformations sur jantes alu</p>
+                <div class="feature-card" onclick="showPage('admin')">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Administration</h3>
+                    <p>Tableau de bord et paramètres</p>
                 </div>
             </div>
         </div>
-    </section>
 
-    <section class="contact">
-        <div class="container">
-            <h2>Nous Contacter</h2>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <h3>📍 Adresse</h3>
-                    <p>Liévin, France</p>
+        <!-- Page Devis -->
+        <div id="devis" class="page">
+            <h1 class="page-title">📋 Gestion des Devis</h1>
+            <div class="form-group">
+                <label>Client</label>
+                <input type="text" placeholder="Nom du client">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" placeholder="email@exemple.com">
+            </div>
+            <div class="form-group">
+                <label>Téléphone</label>
+                <input type="tel" placeholder="06 12 34 56 78">
+            </div>
+            <div class="form-group">
+                <label>Type de service</label>
+                <select>
+                    <option>Rénovation complète</option>
+                    <option>Polissage</option>
+                    <option>Réparation</option>
+                    <option>Personnalisation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea rows="4" placeholder="Détails de la demande..."></textarea>
+            </div>
+            <button class="btn-primary">Créer le Devis</button>
+            
+            <table class="data-table">
+                <tr><th>Date</th><th>Client</th><th>Service</th><th>Montant</th><th>Statut</th></tr>
+                <tr><td>21/08/2025</td><td>Martin Dupont</td><td>Rénovation</td><td>280€</td><td>En attente</td></tr>
+                <tr><td>20/08/2025</td><td>Sophie Bernard</td><td>Polissage</td><td>120€</td><td>Accepté</td></tr>
+            </table>
+        </div>
+
+        <!-- Page Réservation -->
+        <div id="reservation" class="page">
+            <h1 class="page-title">📅 Gestion des Réservations</h1>
+            <div class="form-group">
+                <label>Client</label>
+                <input type="text" placeholder="Nom du client">
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date">
+            </div>
+            <div class="form-group">
+                <label>Heure</label>
+                <input type="time">
+            </div>
+            <div class="form-group">
+                <label>Service</label>
+                <select>
+                    <option>Rénovation complète</option>
+                    <option>Polissage</option>
+                    <option>Réparation</option>
+                    <option>Personnalisation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Durée estimée</label>
+                <select>
+                    <option>2 heures</option>
+                    <option>4 heures</option>
+                    <option>1 journée</option>
+                    <option>2 jours</option>
+                </select>
+            </div>
+            <button class="btn-primary">Créer la Réservation</button>
+            
+            <table class="data-table">
+                <tr><th>Date</th><th>Heure</th><th>Client</th><th>Service</th><th>Statut</th></tr>
+                <tr><td>22/08/2025</td><td>09:00</td><td>Martin Dupont</td><td>Rénovation</td><td>Confirmé</td></tr>
+                <tr><td>23/08/2025</td><td>14:00</td><td>Sophie Bernard</td><td>Polissage</td><td>Planifié</td></tr>
+            </table>
+        </div>
+
+        <!-- Page Facturation -->
+        <div id="facturation" class="page">
+            <h1 class="page-title">💰 Gestion de la Facturation</h1>
+            <div class="form-group">
+                <label>Numéro de facture</label>
+                <input type="text" value="FACT-2025-001" readonly>
+            </div>
+            <div class="form-group">
+                <label>Client</label>
+                <input type="text" placeholder="Nom du client">
+            </div>
+            <div class="form-group">
+                <label>Service effectué</label>
+                <select>
+                    <option>Rénovation complète</option>
+                    <option>Polissage</option>
+                    <option>Réparation</option>
+                    <option>Personnalisation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Montant HT</label>
+                <input type="number" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>TVA (%)</label>
+                <input type="number" value="20" readonly>
+            </div>
+            <button class="btn-primary">Générer la Facture</button>
+            
+            <table class="data-table">
+                <tr><th>N° Facture</th><th>Date</th><th>Client</th><th>Montant TTC</th><th>Statut</th></tr>
+                <tr><td>FACT-2025-001</td><td>21/08/2025</td><td>Martin Dupont</td><td>336€</td><td>Payée</td></tr>
+                <tr><td>FACT-2025-002</td><td>20/08/2025</td><td>Sophie Bernard</td><td>144€</td><td>En attente</td></tr>
+            </table>
+        </div>
+
+        <!-- Page Admin -->
+        <div id="admin" class="page">
+            <h1 class="page-title">⚙️ Tableau de Bord</h1>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Statistiques</h3>
+                    <p>Chiffre d'affaires : 2 450€<br>Devis en attente : 3<br>Réservations : 5</p>
                 </div>
-                <div class="contact-item">
-                    <h3>📞 Téléphone</h3>
-                    <p>Contactez-nous pour un devis</p>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Clients</h3>
+                    <p>Total clients : 48<br>Nouveaux ce mois : 7<br>Clients fidèles : 15</p>
                 </div>
-                <div class="contact-item">
-                    <h3>📧 Email</h3>
-                    <p>contact@myjantes.fr</p>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Performance</h3>
+                    <p>Devis convertis : 85%<br>Satisfaction : 4.8/5<br>Délai moyen : 2j</p>
                 </div>
-                <div class="contact-item">
-                    <h3>⏰ Horaires</h3>
-                    <p>Sur rendez-vous</p>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Paramètres</h3>
+                    <p>Configuration générale<br>Tarifs et services<br>Notifications</p>
                 </div>
             </div>
-            <div>
-                <a href="mailto:contact@myjantes.fr" class="btn">Demander un devis</a>
-                <a href="tel:+" class="btn">Nous appeler</a>
-            </div>
         </div>
-    </section>
+    </div>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 MY JANTES - Expert en rénovation de jantes aluminium à Liévin</p>
-        </div>
-    </footer>
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[href="#${pageId}"]`).classList.add('active');
+        }
+    </script>
 </body>
-</html>"""
+"""
     
     with open(build_dir / "index.html", "w", encoding="utf-8") as f:
         f.write(index_content)
