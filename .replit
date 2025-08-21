@@ -1,7 +1,15 @@
-modules = ["flutter", "python-3.11"]
+modules = ["flutter", "python-3.11", "nodejs-20"]
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [agent]
-integrations = ["javascript_object_storage==1.0.0"]
+integrations = ["javascript_object_storage==1.0.0", "javascript_database==1.0.0", "javascript_log_in_with_replit==1.0.0"]
+
+[nix]
+packages = ["hol", "libxcrypt", "zip", "zulu23"]
+channel = "stable-25_05"
+
+[deployment]
+deploymentTarget = "cloudrun"
+run = ["sh", "-c", "python3 main.py"]
