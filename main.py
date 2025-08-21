@@ -48,71 +48,208 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
         
         fallback_content = """<!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-    <meta name="description" content="MY JANTES - Expert en rénovation de jantes aluminium">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MY JANTES - Expert en rénovation de jantes aluminium à Liévin. Redonnez vie à vos jantes avec notre expertise professionnelle.">
+    <meta name="keywords" content="rénovation jantes, jantes aluminium, Liévin, réparation jantes, polissage jantes">
+    <meta property="og:title" content="MY JANTES - Rénovation de jantes aluminium">
+    <meta property="og:description" content="Expert en rénovation de jantes aluminium à Liévin">
+    <meta property="og:type" content="website">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="MY JANTES">
-    <meta name="msapplication-TileColor" content="#DC2626">
     <meta name="theme-color" content="#DC2626">
-    <title>MY JANTES - Rénovation de jantes</title>
+    <title>MY JANTES - Rénovation de jantes aluminium à Liévin</title>
+    <link rel="manifest" href="manifest.json">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .header {
             background: linear-gradient(135deg, #DC2626, #EF4444);
             color: white;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             text-align: center;
+            padding: 60px 20px;
+        }
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
         }
         .container {
-            max-width: 600px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-        h1 { font-size: 2.5em; margin-bottom: 20px; }
-        p { font-size: 1.2em; margin-bottom: 15px; }
-        .status {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
+        .services {
+            padding: 60px 20px;
+            background: #f8f9fa;
+        }
+        .services h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            color: #DC2626;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .service-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        .service-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .service-card h3 {
+            color: #DC2626;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .contact {
+            background: #DC2626;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .contact h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .contact-item {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
             border-radius: 10px;
-            margin: 20px 0;
+        }
+        .contact-item h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
         }
         .btn {
             display: inline-block;
-            padding: 12px 24px;
             background: white;
             color: #DC2626;
+            padding: 15px 30px;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
+            font-size: 1.1em;
             margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        .footer {
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.2em; }
+            .header p { font-size: 1.1em; }
+            .services h2 { font-size: 2em; }
+            .contact h2 { font-size: 2em; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>MY JANTES</h1>
-        <p>Expert en rénovation de jantes aluminium</p>
-        
-        <div class="status">
-            <h3>🚀 Application en ligne</h3>
-            <p>Le service MY JANTES est opérationnel et prêt à vous servir.</p>
-            <p>Spécialiste en rénovation de jantes aluminium à Liévin.</p>
+    <header class="header">
+        <div class="container">
+            <h1>MY JANTES</h1>
+            <p>Expert en rénovation de jantes aluminium</p>
+            <p>Redonnez vie à vos jantes avec notre expertise professionnelle</p>
         </div>
-        
-        <a href="#" class="btn" onclick="location.reload(); return false;">🔄 Actualiser</a>
-        <a href="mailto:contact@myjantes.fr" class="btn">📧 Contact</a>
-    </div>
+    </header>
+
+    <section class="services">
+        <div class="container">
+            <h2>Nos Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Rénovation Complète</h3>
+                    <p>Remise à neuf de vos jantes aluminium avec finition professionnelle</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">✨</div>
+                    <h3>Polissage Expert</h3>
+                    <p>Polissage haute qualité pour un éclat parfait de vos jantes</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🎨</div>
+                    <h3>Personnalisation</h3>
+                    <p>Customisation selon vos goûts avec une large gamme de finitions</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔧</div>
+                    <h3>Réparation</h3>
+                    <p>Réparation de rayures, impacts et déformations sur jantes alu</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact">
+        <div class="container">
+            <h2>Nous Contacter</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>📍 Adresse</h3>
+                    <p>Liévin, France</p>
+                </div>
+                <div class="contact-item">
+                    <h3>📞 Téléphone</h3>
+                    <p>Contactez-nous pour un devis</p>
+                </div>
+                <div class="contact-item">
+                    <h3>📧 Email</h3>
+                    <p>contact@myjantes.fr</p>
+                </div>
+                <div class="contact-item">
+                    <h3>⏰ Horaires</h3>
+                    <p>Sur rendez-vous</p>
+                </div>
+            </div>
+            <div>
+                <a href="mailto:contact@myjantes.fr" class="btn">Demander un devis</a>
+                <a href="tel:+" class="btn">Nous appeler</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 MY JANTES - Expert en rénovation de jantes aluminium à Liévin</p>
+        </div>
+    </footer>
 </body>
 </html>"""
         
@@ -220,85 +357,210 @@ def create_fallback_web():
     build_dir = Path("flutter_app/build/web")
     build_dir.mkdir(parents=True, exist_ok=True)
     
-    # Create a basic index.html
+    # Create professional MY JANTES homepage
     index_content = """<!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-    <meta name="description" content="MY JANTES - Expert en rénovation de jantes aluminium">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MY JANTES - Expert en rénovation de jantes aluminium à Liévin. Redonnez vie à vos jantes avec notre expertise professionnelle.">
+    <meta name="keywords" content="rénovation jantes, jantes aluminium, Liévin, réparation jantes, polissage jantes">
+    <meta property="og:title" content="MY JANTES - Rénovation de jantes aluminium">
+    <meta property="og:description" content="Expert en rénovation de jantes aluminium à Liévin">
+    <meta property="og:type" content="website">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="MY JANTES">
-    <meta name="msapplication-TileColor" content="#DC2626">
     <meta name="theme-color" content="#DC2626">
-    <title>MY JANTES - Rénovation de jantes</title>
+    <title>MY JANTES - Rénovation de jantes aluminium à Liévin</title>
     <link rel="manifest" href="manifest.json">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .header {
             background: linear-gradient(135deg, #DC2626, #EF4444);
             color: white;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             text-align: center;
+            padding: 60px 20px;
+        }
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
         }
         .container {
-            max-width: 600px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-        h1 { font-size: 2.5em; margin-bottom: 20px; }
-        p { font-size: 1.2em; margin-bottom: 15px; }
-        .status {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
+        .services {
+            padding: 60px 20px;
+            background: #f8f9fa;
+        }
+        .services h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            color: #DC2626;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .service-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        .service-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .service-card h3 {
+            color: #DC2626;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .contact {
+            background: #DC2626;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .contact h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .contact-item {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
             border-radius: 10px;
-            margin: 20px 0;
+        }
+        .contact-item h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
         }
         .btn {
             display: inline-block;
-            padding: 12px 24px;
             background: white;
             color: #DC2626;
+            padding: 15px 30px;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
+            font-size: 1.1em;
             margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        .footer {
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.2em; }
+            .header p { font-size: 1.1em; }
+            .services h2 { font-size: 2em; }
+            .contact h2 { font-size: 2em; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>MY JANTES</h1>
-        <p>Expert en rénovation de jantes aluminium</p>
-        
-        <div class="status">
-            <h3>🚀 Déploiement en cours</h3>
-            <p>L'application Flutter est en cours de configuration pour le déploiement.</p>
-            <p>Cette page sera automatiquement remplacée par l'application complète.</p>
+    <header class="header">
+        <div class="container">
+            <h1>MY JANTES</h1>
+            <p>Expert en rénovation de jantes aluminium</p>
+            <p>Redonnez vie à vos jantes avec notre expertise professionnelle</p>
         </div>
-        
-        <a href="#" class="btn">🔄 Actualiser</a>
-        <a href="mailto:contact@myjantes.fr" class="btn">📧 Contact</a>
-    </div>
-    
-    <script>
-        // Auto-refresh every 30 seconds to check for Flutter build
-        setTimeout(() => location.reload(), 30000);
-        
-        // Simple click handler for refresh button
-        document.querySelector('.btn').onclick = (e) => {
-            e.preventDefault();
-            location.reload();
-        };
-    </script>
+    </header>
+
+    <section class="services">
+        <div class="container">
+            <h2>Nos Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Rénovation Complète</h3>
+                    <p>Remise à neuf de vos jantes aluminium avec finition professionnelle</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">✨</div>
+                    <h3>Polissage Expert</h3>
+                    <p>Polissage haute qualité pour un éclat parfait de vos jantes</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🎨</div>
+                    <h3>Personnalisation</h3>
+                    <p>Customisation selon vos goûts avec une large gamme de finitions</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔧</div>
+                    <h3>Réparation</h3>
+                    <p>Réparation de rayures, impacts et déformations sur jantes alu</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact">
+        <div class="container">
+            <h2>Nous Contacter</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>📍 Adresse</h3>
+                    <p>Liévin, France</p>
+                </div>
+                <div class="contact-item">
+                    <h3>📞 Téléphone</h3>
+                    <p>Contactez-nous pour un devis</p>
+                </div>
+                <div class="contact-item">
+                    <h3>📧 Email</h3>
+                    <p>contact@myjantes.fr</p>
+                </div>
+                <div class="contact-item">
+                    <h3>⏰ Horaires</h3>
+                    <p>Sur rendez-vous</p>
+                </div>
+            </div>
+            <div>
+                <a href="mailto:contact@myjantes.fr" class="btn">Demander un devis</a>
+                <a href="tel:+" class="btn">Nous appeler</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 MY JANTES - Expert en rénovation de jantes aluminium à Liévin</p>
+        </div>
+    </footer>
 </body>
 </html>"""
     
