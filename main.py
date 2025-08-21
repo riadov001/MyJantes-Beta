@@ -270,7 +270,7 @@ class MyJantesServer(http.server.BaseHTTPRequestHandler):
     def serve_logo(self):
         """Serve the MY JANTES logo"""
         try:
-            logo_path = "attached_assets/generated_images/MY_JANTES_automotive_logo_c96fdc77.png"
+            logo_path = "myjantes_official_logo.png"
             with open(logo_path, 'rb') as f:
                 logo_data = f.read()
                 
@@ -372,10 +372,13 @@ class MyJantesServer(http.server.BaseHTTPRequestHandler):
         }
         
         .logo img {
-            width: 45px;
             height: 45px;
-            border-radius: 8px;
+            width: auto;
+            max-width: 120px;
+            border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            background: white;
+            padding: 2px;
         }
         
         .nav-links {
