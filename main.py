@@ -212,6 +212,8 @@ class MyJantesServer(http.server.BaseHTTPRequestHandler):
             self.send_json_response(self.api.get_all_reservations())
         elif self.path == '/api/factures':
             self.send_json_response(self.api.get_all_factures())
+        elif self.path == '/logo':
+            self.serve_logo()
         elif self.path == '/':
             self.serve_main_page()
         else:
@@ -264,6 +266,21 @@ class MyJantesServer(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         response = {'success': False, 'error': error_msg}
         self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+    
+    def serve_logo(self):
+        """Serve the MY JANTES logo"""
+        try:
+            logo_path = "attached_assets/generated_images/MY_JANTES_automotive_logo_c96fdc77.png"
+            with open(logo_path, 'rb') as f:
+                logo_data = f.read()
+                
+            self.send_response(200)
+            self.send_header('Content-type', 'image/png')
+            self.send_header('Cache-Control', 'max-age=3600')
+            self.end_headers()
+            self.wfile.write(logo_data)
+        except FileNotFoundError:
+            self.send_404()
     
     def send_404(self):
         """Send 404 response"""
@@ -351,12 +368,14 @@ class MyJantesServer(http.server.BaseHTTPRequestHandler):
             letter-spacing: -1px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
         
-        .logo i {
-            font-size: 2.2rem;
-            color: var(--accent-color);
+        .logo img {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
         
         .nav-links {
@@ -904,7 +923,7 @@ class MyJantesServer(http.server.BaseHTTPRequestHandler):
     <nav class="navbar">
         <div class="navbar-content">
             <div class="logo">
-                <i class="fas fa-cog"></i>
+                <img src="/logo" alt="MY JANTES Logo" id="logo-img" onerror="this.style.display='none'">
                 MY JANTES
             </div>
             <ul class="nav-links" id="nav-links">
