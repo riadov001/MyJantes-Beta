@@ -12,5 +12,4 @@ channel = "stable-25_05"
 
 [deployment]
 deploymentTarget = "cloudrun"
-run = ["sh", "-c", "Flutter run"]
-build = ["sh", "-c", "Flutter build web"]
+run = ["sh", "-c", "cd build/web && python3 -m http.server 5000 --bind 0.0.0.0"]
